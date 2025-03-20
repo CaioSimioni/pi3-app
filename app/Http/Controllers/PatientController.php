@@ -9,18 +9,9 @@ use Inertia\Inertia;
 class PatientController extends Controller
 {
     public function index(Request $request) {
-        $search = $request->input('search', '');
-
-        $patients = Patient::where(function ($query) use ($search) {
-            $query->where('name', 'like', "%$search%")
-                  ->orWhere('cpf', 'like', "%$search%");
-        })
-        ->orderBy('created_at', 'desc')
-        ->paginate(10);
-
+        $patients = Patient::orderBy('created_at', 'desc')->get();
         return Inertia::render('patients/index', [
             'patients' => $patients,
-            'search' => $search,
         ]);
     }
 
@@ -39,7 +30,7 @@ class PatientController extends Controller
             'insurance' => 'nullable|in:Nenhum,São Francisco,Unimed',
         ]);
 
-        Patient::create(array_merge($request->all(), ['is_active' => true]));
+        $patient = Patient::create(array_merge($request->all(), ['is_active' => true]));
 
         return redirect()->route('patients.index')->with('success', 'Paciente cadastrado com sucesso!');
     }
