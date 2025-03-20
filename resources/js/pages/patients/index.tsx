@@ -16,7 +16,7 @@ import { CirclePlus, Pencil, Trash2 } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Patients Painel',
+        title: 'Patients Panel',
         href: '/patients',
     },
 ];
@@ -43,7 +43,14 @@ interface Patient {
     updated_at: string;
 }
 
-export default function Patients({ patients }: { patients: Patient[] }) {
+interface PaginatedPatients {
+    data: Patient[];
+    current_page: number;
+    last_page: number;
+    total: number;
+}
+
+export default function Patients({ patients }: { patients: PaginatedPatients }) {
     const { data, setData, post, patch, delete: destroy, processing, errors, reset } = useForm({
         name: '',
         cpf: '',
@@ -60,6 +67,7 @@ export default function Patients({ patients }: { patients: Patient[] }) {
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [toastVisible, setToastVisible] = useState(false);
     const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
+    const [filteredPatients, setFilteredPatients] = useState<Patient[]>(patients.data);
 
     const handleCreatePatient = () => {
         post(route('patients.store'), {
@@ -72,7 +80,8 @@ export default function Patients({ patients }: { patients: Patient[] }) {
     };
 
     const handleEditPatient = () => {
-        patch(route('patients.update', { patient: selectedPatient!.id }), {
+        if (!selectedPatient) return;
+        patch(route('patients.update', { patient: selectedPatient.id }), {
             preserveScroll: true,
             onSuccess: () => {
                 reset();
@@ -96,7 +105,7 @@ export default function Patients({ patients }: { patients: Patient[] }) {
             setData({
                 name: selectedPatient.name,
                 cpf: selectedPatient.cpf,
-                birth_date: new Date(selectedPatient.birth_date).toISOString().split('T')[0], // Format date for input
+                birth_date: new Date(selectedPatient.birth_date).toISOString().split('T')[0],
                 phone: selectedPatient.phone || '',
                 email: selectedPatient.email || '',
                 address: selectedPatient.address || '',
@@ -121,112 +130,131 @@ export default function Patients({ patients }: { patients: Patient[] }) {
                             </Toast>
                         )}
 
-                        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                            <DialogTrigger asChild>
-                                <Button onClick={() => setDialogOpen(true)}>Create New Patient <CirclePlus /></Button>
-                            </DialogTrigger>
-                            <DialogContent>
-                                <DialogHeader>
-                                    <DialogTitle>Create New Patient</DialogTitle>
-                                    <DialogDescription>Fill in the details below to create a new patient.</DialogDescription>
-                                </DialogHeader>
-                                <div className="space-y-4">
-                                    <div>
-                                        <Label htmlFor="name">Name</Label>
-                                        <Input
-                                            id="name"
-                                            type="text"
-                                            value={data.name}
-                                            onChange={(e) => setData('name', e.target.value)}
-                                            disabled={processing}
-                                        />
-                                        {errors.name && <span>{errors.name}</span>}
+                        <div className="flex justify-between items-center">
+                            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                                <DialogTrigger asChild>
+                                    <Button onClick={() => setDialogOpen(true)}>Create New Patient <CirclePlus /></Button>
+                                </DialogTrigger>
+                                <DialogContent>
+                                    <DialogHeader>
+                                        <DialogTitle>Create New Patient</DialogTitle>
+                                        <DialogDescription>Fill in the details below to create a new patient.</DialogDescription>
+                                    </DialogHeader>
+                                    <div className="space-y-4">
+                                        <div>
+                                            <Label htmlFor="name">Name</Label>
+                                            <Input
+                                                id="name"
+                                                type="text"
+                                                value={data.name}
+                                                onChange={(e) => setData('name', e.target.value)}
+                                                disabled={processing}
+                                            />
+                                            {errors.name && <span>{errors.name}</span>}
+                                        </div>
+                                        <div>
+                                            <Label htmlFor="cpf">CPF</Label>
+                                            <Input
+                                                id="cpf"
+                                                type="text"
+                                                value={data.cpf}
+                                                onChange={(e) => setData('cpf', e.target.value)}
+                                                disabled={processing}
+                                            />
+                                            {errors.cpf && <span>{errors.cpf}</span>}
+                                        </div>
+                                        <div>
+                                            <Label htmlFor="birth_date">Birth Date</Label>
+                                            <Input
+                                                id="birth_date"
+                                                type="date"
+                                                value={data.birth_date}
+                                                onChange={(e) => setData('birth_date', e.target.value)}
+                                                disabled={processing}
+                                            />
+                                            {errors.birth_date && <span>{errors.birth_date}</span>}
+                                        </div>
+                                        <div>
+                                            <Label htmlFor="phone">Phone</Label>
+                                            <Input
+                                                id="phone"
+                                                type="text"
+                                                value={data.phone}
+                                                onChange={(e) => setData('phone', e.target.value)}
+                                                disabled={processing}
+                                            />
+                                            {errors.phone && <span>{errors.phone}</span>}
+                                        </div>
+                                        <div>
+                                            <Label htmlFor="email">Email</Label>
+                                            <Input
+                                                id="email"
+                                                type="email"
+                                                value={data.email}
+                                                onChange={(e) => setData('email', e.target.value)}
+                                                disabled={processing}
+                                            />
+                                            {errors.email && <span>{errors.email}</span>}
+                                        </div>
+                                        <div>
+                                            <Label htmlFor="address">Address</Label>
+                                            <Input
+                                                id="address"
+                                                type="text"
+                                                value={data.address}
+                                                onChange={(e) => setData('address', e.target.value)}
+                                                disabled={processing}
+                                            />
+                                            {errors.address && <span>{errors.address}</span>}
+                                        </div>
+                                        <div>
+                                            <Label htmlFor="insurance">Insurance</Label>
+                                            <Select
+                                                value={data.insurance}
+                                                onValueChange={(value) => setData('insurance', value)}
+                                                disabled={processing}
+                                            >
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select an insurance" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="Nenhum">Nenhum</SelectItem>
+                                                    <SelectItem value="São Francisco">São Francisco</SelectItem>
+                                                    <SelectItem value="Unimed">Unimed</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                            {errors.insurance && <span>{errors.insurance}</span>}
+                                        </div>
                                     </div>
-                                    <div>
-                                        <Label htmlFor="cpf">CPF</Label>
-                                        <Input
-                                            id="cpf"
-                                            type="text"
-                                            value={data.cpf}
-                                            onChange={(e) => setData('cpf', e.target.value)}
-                                            disabled={processing}
-                                        />
-                                        {errors.cpf && <span>{errors.cpf}</span>}
-                                    </div>
-                                    <div>
-                                        <Label htmlFor="birth_date">Birth Date</Label>
-                                        <Input
-                                            id="birth_date"
-                                            type="date"
-                                            value={data.birth_date}
-                                            onChange={(e) => setData('birth_date', e.target.value)}
-                                            disabled={processing}
-                                        />
-                                        {errors.birth_date && <span>{errors.birth_date}</span>}
-                                    </div>
-                                    <div>
-                                        <Label htmlFor="phone">Phone</Label>
-                                        <Input
-                                            id="phone"
-                                            type="text"
-                                            value={data.phone}
-                                            onChange={(e) => setData('phone', e.target.value)}
-                                            disabled={processing}
-                                        />
-                                        {errors.phone && <span>{errors.phone}</span>}
-                                    </div>
-                                    <div>
-                                        <Label htmlFor="email">Email</Label>
-                                        <Input
-                                            id="email"
-                                            type="email"
-                                            value={data.email}
-                                            onChange={(e) => setData('email', e.target.value)}
-                                            disabled={processing}
-                                        />
-                                        {errors.email && <span>{errors.email}</span>}
-                                    </div>
-                                    <div>
-                                        <Label htmlFor="address">Address</Label>
-                                        <Input
-                                            id="address"
-                                            type="text"
-                                            value={data.address}
-                                            onChange={(e) => setData('address', e.target.value)}
-                                            disabled={processing}
-                                        />
-                                        {errors.address && <span>{errors.address}</span>}
-                                    </div>
-                                    <div>
-                                        <Label htmlFor="insurance">Insurance</Label>
-                                        <Select
-                                            value={data.insurance}
-                                            onValueChange={(value) => setData('insurance', value)}
-                                            disabled={processing}
-                                        >
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Select an insurance" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="Nenhum">Nenhum</SelectItem>
-                                                <SelectItem value="São Francisco">São Francisco</SelectItem>
-                                                <SelectItem value="Unimed">Unimed</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                        {errors.insurance && <span>{errors.insurance}</span>}
-                                    </div>
-                                </div>
-                                <DialogFooter>
-                                    <Button onClick={handleCreatePatient} disabled={processing}>
-                                        {processing ? 'Creating...' : 'Create'}
-                                        <CirclePlus />
-                                    </Button>
-                                    <DialogClose asChild>
-                                        <Button variant="outline">Cancel</Button>
-                                    </DialogClose>
-                                </DialogFooter>
-                            </DialogContent>
-                        </Dialog>
+                                    <DialogFooter>
+                                        <Button onClick={handleCreatePatient} disabled={processing}>
+                                            {processing ? 'Creating...' : 'Create'}
+                                            <CirclePlus />
+                                        </Button>
+                                        <DialogClose asChild>
+                                            <Button variant="outline">Cancel</Button>
+                                        </DialogClose>
+                                    </DialogFooter>
+                                </DialogContent>
+                            </Dialog>
+
+                            <div className="space-y-4">
+                                <Input
+                                    id="search"
+                                    type="text"
+                                    placeholder="Search by name or CPF"
+                                    onChange={(e) => {
+                                        const query = e.target.value.toLowerCase();
+                                        const filtered = patients.data.filter(
+                                            (patient) =>
+                                                patient.name.toLowerCase().includes(query) ||
+                                                patient.cpf.includes(query)
+                                        );
+                                        setFilteredPatients(filtered);
+                                    }}
+                                />
+                            </div>
+                        </div>
 
                         <Table className="w-max">
                             <TableHeader>
@@ -239,34 +267,24 @@ export default function Patients({ patients }: { patients: Patient[] }) {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {patients.map((patient) => (
+                                {filteredPatients.map((patient) => (
                                     <TableRow key={patient.id}>
                                         <TableCell>{patient.id}</TableCell>
                                         <TableCell>{patient.name}</TableCell>
                                         <TableCell>{patient.cpf}</TableCell>
-                                        <TableCell>{new Date(patient.birth_date).toLocaleString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}</TableCell>
+                                        <TableCell>{new Date(patient.birth_date).toLocaleDateString()}</TableCell>
                                         <TableCell>
-                                            <Button
-                                                variant="outline"
-                                                className="mr-2"
-                                                size="sm"
-                                                onClick={() => {
-                                                    setSelectedPatient(patient);
-                                                    setEditDialogOpen(true);
-                                                }}>
-                                                Edit
-                                                <Pencil />
+                                            <Button variant="outline" className="mr-2" size="sm" onClick={() => {
+                                                setSelectedPatient(patient);
+                                                setEditDialogOpen(true);
+                                            }}>
+                                                Edit <Pencil />
                                             </Button>
-                                            <Button
-                                                variant="destructive"
-                                                className="mr-2"
-                                                size="sm"
-                                                onClick={() => {
-                                                    setSelectedPatient(patient);
-                                                    setDeleteDialogOpen(true);
-                                                }}>
-                                                Delete
-                                                <Trash2 />
+                                            <Button variant="destructive" size="sm" onClick={() => {
+                                                setSelectedPatient(patient);
+                                                setDeleteDialogOpen(true);
+                                            }}>
+                                                Delete <Trash2 />
                                             </Button>
                                         </TableCell>
                                     </TableRow>

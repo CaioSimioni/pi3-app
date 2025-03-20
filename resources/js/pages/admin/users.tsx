@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { ToastProvider, Toast, ToastTitle, ToastDescription, ToastViewport } from "@/components/ui/toaster";
 import { Checkbox } from "@/components/ui/checkbox";
+import { CirclePlus, Pencil, Trash2 } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -135,7 +136,7 @@ export default function Users({ users }: PropsWithChildren<{ users: User[] }>) {
 
                         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                             <DialogTrigger asChild>
-                                <Button onClick={() => setDialogOpen(true)}>Create New User</Button>
+                                <Button onClick={() => setDialogOpen(true)}>Create New User <CirclePlus /></Button>
                             </DialogTrigger>
                             <DialogContent>
                                 <DialogHeader>
@@ -239,7 +240,11 @@ export default function Users({ users }: PropsWithChildren<{ users: User[] }>) {
                                         <TableCell className="px-6 py-4 whitespace-nowrap">
                                             <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
                                                 <DialogTrigger asChild>
-                                                    <Button variant="outline" className="mr-2" size="sm" onClick={() => { setSelectedUser(user); setEditDialogOpen(true); }}>Edit</Button>
+                                                    <Button variant="outline" className="mr-2" size="sm" onClick={() => {
+                                                        setSelectedUser(user);
+                                                        setEditDialogOpen(true);
+                                                    }}>Edit<Pencil />
+                                                    </Button>
                                                 </DialogTrigger>
                                                 <DialogContent>
                                                     <DialogHeader>
@@ -333,7 +338,7 @@ export default function Users({ users }: PropsWithChildren<{ users: User[] }>) {
                                             </Dialog>
                                             <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
                                                 <DialogTrigger asChild>
-                                                    <Button variant="destructive" size="sm" onClick={() => { setSelectedUser(user); setDeleteDialogOpen(true); }}>Delete</Button>
+                                                    <Button variant="destructive" size="sm" onClick={() => { setSelectedUser(user); setDeleteDialogOpen(true); }}>Delete <Trash2 /></Button>
                                                 </DialogTrigger>
                                                 <DialogContent>
                                                     <DialogHeader>
