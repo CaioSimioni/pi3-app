@@ -36,7 +36,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
     };
 
     return (
-        <AuthLayout title="Faça login no seu usuário" description="Digite seu email e senha para acessar sua conta">
+        <AuthLayout title="Log in to your account" description="Enter your email and password to access your account">
             <Head title="Log in" />
 
             <form className="flex flex-col gap-6" onSubmit={submit}>
@@ -54,15 +54,15 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                             onChange={(e) => setData('email', e.target.value)}
                             placeholder="email@example.com"
                         />
-                        <InputError message={errors.email ? "Por favor, insira um email válido." : errors.email} />
+                        <InputError message={errors.email ? "Please enter a valid email address." : errors.email} />
                     </div>
 
                     <div className="grid gap-2">
                         <div className="flex items-center">
-                            <Label htmlFor="password">Senha</Label>
+                            <Label htmlFor="password">Password</Label>
                             {canResetPassword && (
                                 <TextLink href={route('password.request')} className="ml-auto text-sm" tabIndex={5}>
-                                    Esqueceu sua senha?
+                                    Forgot your password?
                                 </TextLink>
                             )}
                         </div>
@@ -87,7 +87,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                             onClick={() => setData('remember', !data.remember)}
                             tabIndex={3}
                         />
-                        <Label htmlFor="remember">Lembrar de mim</Label>
+                        <Label htmlFor="remember">Remember me</Label>
                     </div>
 
                     <Button type="submit" className="mt-4 w-full" tabIndex={4} disabled={processing}>

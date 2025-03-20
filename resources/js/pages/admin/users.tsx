@@ -219,11 +219,11 @@ export default function Users({ users }: PropsWithChildren<{ users: User[] }>) {
                             <TableHeader>
                                 <TableRow>
                                     <TableHead>ID</TableHead>
-                                    <TableHead>Name</TableHead>
-                                    <TableHead>Email</TableHead>
-                                    <TableHead>Role</TableHead>
-                                    <TableHead>Created At</TableHead>
-                                    <TableHead>Updated At</TableHead>
+                                    <TableHead className="text-center">Name</TableHead>
+                                    <TableHead className="text-center">Email</TableHead>
+                                    <TableHead className="text-center">Role</TableHead>
+                                    <TableHead className="text-center">Created At</TableHead>
+                                    <TableHead className="text-center">Updated At</TableHead>
                                     <TableHead className="text-center">Actions</TableHead>
                                 </TableRow>
                             </TableHeader>

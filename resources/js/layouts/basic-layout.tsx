@@ -10,7 +10,6 @@ export default function BasicLayout({ children, sidebarNavItems }: PropsWithChil
     const currentPath = window.location.pathname;
     return (
         <div className="px-4 py-6">
-            <Heading title="Admin" description="Manage users, logs, variables, etc" />
 
             <div className="flex flex-col space-y-8 lg:flex-row lg:space-y-0 lg:space-x-12">
                 <aside className="w-full max-w-xl lg:w-48">
