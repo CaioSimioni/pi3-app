@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         php-version: [8.2]
-        node-version: [16.x]
+        node-version: [23.x]
 
     steps:
     - name: Checkout code
