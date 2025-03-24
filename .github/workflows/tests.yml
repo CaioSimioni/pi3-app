@@ -10,19 +10,6 @@ jobs:
       matrix:
         php-version: [8.2]
 
-    services:
-      mysql:
-        image: mysql:5.7
-        env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: test
-        options: >-
-          --health-cmd="mysqladmin ping --silent"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
-        ports:
-          - 3306:3306
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -36,23 +23,16 @@ jobs:
       run: composer install --prefer-dist --no-progress --no-suggest --ansi
 
     - name: Copy .env file
-      run: cp .env.example .env
+      run: |
+        cp .env.example .env
+        echo "DB_CONNECTION=sqlite" >> .env
+        echo "DB_DATABASE=:memory:" >> .env
 
     - name: Generate application key
       run: php artisan key:generate
 
     - name: Run migrations
-      env:
-        DB_HOST: 127.0.0.1
-        DB_DATABASE: test
-        DB_USERNAME: root
-        DB_PASSWORD: root
       run: php artisan migrate
 
     - name: Run tests
-      env:
-        DB_HOST: 127.0.0.1
-        DB_DATABASE: test
-        DB_USERNAME: root
-        DB_PASSWORD: root
       run: php artisan test
