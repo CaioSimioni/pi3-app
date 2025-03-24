@@ -29,6 +29,7 @@ export interface SharedData {
     usersQuantity: number;
     patientsNumber: number;
     patientsQuantity: number;
+    appointmentsQuantity: number;
     ziggy: Config & { location: string };
     [key: string]: unknown;
 }
@@ -57,5 +58,16 @@ export interface Patient {
     is_active: boolean;
     created_at: string;
     updated_at: string;
+    [key: string]: unknown;
+}
+
+export interface Appointment {
+    id: number;
+    patient_id: number;
+    appointment_date: string;
+    notes: string | null;
+    created_at: string;
+    updated_at: string;
+    patient?: Patient;
     [key: string]: unknown;
 }
