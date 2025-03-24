@@ -1,7 +1,7 @@
 name: Deploy Laravel to Fly.io
 
 on:
-  push:
+  pull_request:
     branches:
       - master
 
