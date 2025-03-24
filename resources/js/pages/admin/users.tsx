@@ -1,7 +1,7 @@
 import AppLayout from "@/layouts/app-layout";
 import { type BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
-import { type NavItem } from '@/types';
+import { type NavItem, type User } from '@/types';
 import BasicLayout from '@/layouts/basic-layout';
 import HeadingSmall from '@/components/heading-small';
 import { type PropsWithChildren, useState, useEffect } from 'react';
@@ -34,16 +34,6 @@ const sidebarNavItems: NavItem[] = [
         icon: null,
     },
 ];
-
-interface User {
-    id: number;
-    name: string;
-    email: string;
-    role: string;
-    created_at: string;
-    updated_at: string;
-    [key: string]: any;
-}
 
 const roleTranslations: { [key: string]: string } = {
     adm: "Administrator",

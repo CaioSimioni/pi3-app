@@ -26,6 +26,9 @@ export interface SharedData {
     name: string;
     quote: { message: string; author: string };
     auth: Auth;
+    usersQuantity: number;
+    patientsNumber: number;
+    patientsQuantity: number;
     ziggy: Config & { location: string };
     [key: string]: unknown;
 }
@@ -40,4 +43,19 @@ export interface User {
     created_at: string;
     updated_at: string;
     [key: string]: unknown; // This allows for additional properties...
+}
+
+export interface Patient {
+    id: number;
+    name: string;
+    cpf: string;
+    birth_date: string;
+    phone: string;
+    email: string;
+    address: string;
+    insurance: string;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+    [key: string]: unknown;
 }
