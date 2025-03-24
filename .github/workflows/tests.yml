@@ -1,10 +1,15 @@
 name: Run Laravel Tests
 
-on: [push, pull_request]
+on: [pull_request]
 
 jobs:
   test:
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php-version: [8.2]
+
     services:
       mysql:
         image: mysql:5.7
@@ -25,10 +30,10 @@ jobs:
     - name: Set up PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: 8.0
+        php-version: ${{ matrix.php-version }}
 
     - name: Install dependencies
-      run: composer install
+      run: composer install --prefer-dist --no-progress --no-suggest --ansi
 
     - name: Copy .env file
       run: cp .env.example .env
