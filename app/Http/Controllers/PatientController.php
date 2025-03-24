@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Patient;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Http\Requests\StorePatientRequest;
+use App\Http\Requests\UpdatePatientRequest;
 
 class PatientController extends Controller
 {
@@ -15,34 +17,16 @@ class PatientController extends Controller
         ]);
     }
 
-    public function store(Request $request) {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'cpf' => 'required|string|unique:patients,cpf',
-            'birth_date' => 'required|date',
-            'phone' => 'nullable|string|max:15',
-            'email' => 'nullable|email|max:255',
-            'address' => 'nullable|string|max:255',
-            'insurance' => 'nullable|in:Nenhum,São Francisco,Unimed',
-        ]);
-
-        $patient = Patient::create(array_merge($request->all(), ['is_active' => true]));
+    public function store(StorePatientRequest $request)
+    {
+        $patient = Patient::create($request->validated());
 
         return redirect()->route('patients.index')->with('success', 'Paciente cadastrado com sucesso!');
     }
 
-    public function update(Request $request, Patient $patient) {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'cpf' => 'required|string|unique:patients,cpf,' . $patient->id,
-            'birth_date' => 'required|date',
-            'phone' => 'nullable|string|max:15',
-            'email' => 'nullable|email|max:255',
-            'address' => 'nullable|string|max:255',
-            'insurance' => 'nullable|in:Nenhum,São Francisco,Unimed',
-        ]);
-
-        $patient->update($request->all());
+    public function update(UpdatePatientRequest $request, Patient $patient)
+    {
+        $patient->update($request->validated());
 
         return redirect()->route('patients.index')->with('success', 'Paciente atualizado com sucesso!');
     }
