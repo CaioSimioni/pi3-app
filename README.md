@@ -2,13 +2,15 @@
 
 An open-source hospital management system designed to streamline and optimize hospital operations. This system provides tools for managing patients, scheduling, medical records, staff, finances, inventory, and more.
 
+![Welcome Screen](./public/images/tela-welcome.png)
+
 ## Features
 
 This system offers comprehensive tools for patient management, including electronic medical records, appointment scheduling, and treatment tracking. It also supports staff and medical team management with features like shift scheduling, communication tools, and specialty registration. Financial operations are streamlined with billing, insurance management, and financial reporting, while inventory and pharmacy control ensure proper tracking of medications and materials.
 
 Additional features include laboratory and exam management, emergency care tracking, and business intelligence tools for generating reports and dashboards. The system prioritizes security and compliance, offering access control, record auditing, and adherence to regulations like LGPD and HIPAA.
 
-## Installation
+## Installation and Deployment
 
 1. Clone the repository:
 
@@ -20,24 +22,36 @@ Additional features include laboratory and exam management, emergency care track
 2. Install dependencies:
 
    ```bash
-   composer install
+   composer install --prefer-dist --no-progress --no-suggest --ansi
    npm install
    ```
 
-3. Set up the environment:
+3. Build assets:
+
+   ```bash
+   npm run build
+   ```
+
+4. Set up the environment:
 
    ```bash
    cp .env.example .env
    php artisan key:generate
    ```
 
-4. Configure your database in the `.env` file and run migrations:
+5. Configure your database in the `.env` file and run migrations:
 
    ```bash
    php artisan migrate
    ```
 
-5. Start the development server:
+6. Deploy the application:
+
+   - Ensure your server meets the Laravel requirements (PHP 8.2, Node.js 23.x, etc.).
+   - Use a web server like Apache or Nginx to serve the application.
+   - Point the web server's document root to the `public` directory of the project.
+
+7. Start the development server (optional for local testing):
 
    ```bash
    php artisan serve
@@ -45,8 +59,10 @@ Additional features include laboratory and exam management, emergency care track
 
 ## Usage
 
-- Access the system at `http://localhost:8000`.
+- Access the system at `http://your-domain` or `http://localhost:8000` (for local testing).
 - Log in with the default admin credentials (if applicable) or create a new account.
+
+![Dashboard Screen](./public/images/tela-dashboard.png)
 
 ## License
 
