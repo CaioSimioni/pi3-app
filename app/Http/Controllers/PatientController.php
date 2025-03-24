@@ -15,10 +15,6 @@ class PatientController extends Controller
         ]);
     }
 
-    public function create() {
-        return Inertia::render('Patients/Create');
-    }
-
     public function store(Request $request) {
         $request->validate([
             'name' => 'required|string|max:255',
@@ -33,18 +29,6 @@ class PatientController extends Controller
         $patient = Patient::create(array_merge($request->all(), ['is_active' => true]));
 
         return redirect()->route('patients.index')->with('success', 'Paciente cadastrado com sucesso!');
-    }
-
-    public function show(Patient $patient) {
-        return Inertia::render('Patients/Show', [
-            'patient' => $patient,
-        ]);
-    }
-
-    public function edit(Patient $patient) {
-        return Inertia::render('Patients/Edit', [
-            'patient' => $patient,
-        ]);
     }
 
     public function update(Request $request, Patient $patient) {

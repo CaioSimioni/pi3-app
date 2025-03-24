@@ -25,13 +25,17 @@ const sidebarNavItems: NavItem[] = [
 ];
 
 export default function Dashboard() {
-    const { auth } = usePage<SharedData>().props;
+    const { auth, usersQuantity, patientsQuantity } = usePage<SharedData>().props;
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Admin" />
             <BasicLayout sidebarNavItems={sidebarNavItems}>
                 <div className="space-y-6">
                     <h1><strong>{auth.user.name}</strong> is an administrator</h1>
+                </div>
+                <div>
+                    <h1>Users Quantity: <strong>{usersQuantity}</strong></h1>
+                    <h1>Patients Quantity: <strong>{patientsQuantity}</strong></h1>
                 </div>
             </BasicLayout>
         </AppLayout>

@@ -1,8 +1,9 @@
-/* import { PlaceholderPattern } from '@/components/ui/placeholder-pattern'; */
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
 import { type SharedData } from '@/types';
+import { Card, CardHeader, CardContent } from '@/components/ui/card';
+import { UserRound } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -12,18 +13,24 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Dashboard() {
-    const { auth } = usePage<SharedData>().props;
+    const { patientsNumber } = usePage<SharedData>().props;
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-                <h1>Welcome to Hospital Management!</h1>
-                <div>
-                    <p>Name: {auth.user.name}</p>
-                    <p>Email: {auth.user.email}</p>
-                    <p>Role: {auth.user.role}</p>
-                </div>
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 p-6">
+                <Card>
+                    <CardHeader className='flex-row justify-between'>Patients <UserRound /></CardHeader>
+                    <CardContent className='font-bold'>{patientsNumber}</CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className='flex-row justify-between'>Patients <UserRound /></CardHeader>
+                    <CardContent className='font-bold'>{patientsNumber}</CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className='flex-row justify-between'>Patients <UserRound /></CardHeader>
+                    <CardContent className='font-bold'>{patientsNumber}</CardContent>
+                </Card>
             </div>
         </AppLayout>
     );

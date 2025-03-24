@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\User;
+use App\Models\Patient;
 use Inertia\Inertia;
 use Inertia\Response;
 use App\Http\Controllers\Controller;
@@ -11,9 +12,9 @@ class AdminUsersController extends Controller
 {
     public function users(): Response
     {
-        $users = User::all(); 
+        $users = User::all();
         return Inertia::render('admin/users', [
-            'users' => $users, 
+            'users' => $users,
         ]);
     }
 
@@ -29,6 +30,11 @@ class AdminUsersController extends Controller
         User::create($validated);
 
         return redirect()->route('admin.users');
+    }
+
+    public function usersQuantity(): int
+    {
+        return User::count();
     }
 
     public function update(Request $request, User $user)
@@ -50,5 +56,15 @@ class AdminUsersController extends Controller
         $user->delete();
 
         return redirect()->route('admin.users');
+    }
+
+    public function adminPanel(): Response
+    {
+        $usersQuantity = User::count();
+        $patientsQuantity = Patient::count();
+        return Inertia::render('admin/admin-panel', [
+            'usersQuantity' => $usersQuantity,
+            'patientsQuantity' => $patientsQuantity,
+        ]);
     }
 }
