@@ -3,7 +3,7 @@ name: Deploy Laravel to Fly.io
 on:
   push:
     branches:
-      - deploy
+      - master
 
 jobs:
   deploy:
