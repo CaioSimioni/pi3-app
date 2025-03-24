@@ -1,0 +1,55 @@
+name: Run Laravel Tests
+
+on:
+  push:
+    branches: [ master, develop ]
+  pull_request:
+    branches: [ master, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: testing_db
+          MYSQL_USER: user
+          MYSQL_PASSWORD: password
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - name: 🛎️ Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 📦 Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+          extensions: mbstring, pdo, pdo_mysql, bcmath
+          tools: composer:v2
+
+      - name: 🔄 Install Dependencies
+        run: composer install --no-progress --prefer-dist --optimize-autoloader
+
+      - name: 🔑 Copy .env
+        run: cp .env.example .env
+
+      - name: 🔑 Set up Laravel Environment
+        run: |
+          php artisan key:generate
+          php artisan migrate --force
+        env:
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: testing_db
+          DB_USERNAME: user
+          DB_PASSWORD: password
+
+      - name: 🚀 Run Tests
+        run: php artisan test --env=testing
