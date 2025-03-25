@@ -24,6 +24,7 @@ app = "php artisan serve --host=0.0.0.0 --port=8080"
 [[services]]
 internal_port = 8080
 protocol = "tcp"
+processes = ["app"]
 
 [[services.ports]]
 handlers = ["http", "tls"]
@@ -33,8 +34,8 @@ port = 80
 handlers = ["tls"]
 port = 443
 
-[checks]
-[checks.http]
+[[services.checks]]
+type = "http"
 interval = "10s"
 timeout = "2s"
 method = "get"
