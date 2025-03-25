@@ -1,0 +1,41 @@
+# fly.toml file generated for pi3-app on Fly.io
+
+app = "pi3-app"
+primary_region = "iad" # Altere para a região mais próxima
+
+[build]
+builder = "paketobuildpacks/builder:full-cf"
+
+[env]
+APP_ENV = "production"
+APP_DEBUG = "false"
+APP_URL = "https://pi3-app.fly.dev"
+DB_CONNECTION = "sqlite"
+DB_DATABASE = "/data/database.sqlite"
+SESSION_DRIVER = "database"
+QUEUE_CONNECTION = "database"
+
+[deploy]
+release_command = "php artisan migrate --force"
+
+[processes]
+app = "php artisan serve --host=0.0.0.0 --port=8080"
+
+[[services]]
+internal_port = 8080
+protocol = "tcp"
+
+[[services.ports]]
+handlers = ["http", "tls"]
+port = 80
+
+[[services.ports]]
+handlers = ["tls"]
+port = 443
+
+[checks]
+[checks.http]
+interval = "10s"
+timeout = "2s"
+method = "get"
+path = "/health"
