@@ -11,7 +11,7 @@ APP_ENV = "production"
 APP_DEBUG = "false"
 APP_URL = "https://pi3-app.fly.dev"
 DB_CONNECTION = "sqlite"
-DB_DATABASE = "/data/database.sqlite"
+DB_DATABASE = "/database/database.sqlite"
 SESSION_DRIVER = "database"
 QUEUE_CONNECTION = "database"
 
