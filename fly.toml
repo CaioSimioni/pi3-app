@@ -15,8 +15,12 @@ DB_DATABASE = "/database/database.sqlite"
 SESSION_DRIVER = "database"
 QUEUE_CONNECTION = "database"
 
+[[mounts]]
+source = "pi3_data"
+destination = "/database"
+
 [deploy]
-release_command = "php artisan migrate --force"
+release_command = "mkdir -p /database && touch /database/database.sqlite && php artisan migrate --force"
 
 [processes]
 app = "php artisan serve --host=0.0.0.0 --port=8080"
