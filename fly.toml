@@ -4,7 +4,7 @@ app = "pi3-app"
 primary_region = "iad" # Altere para a região mais próxima
 
 [build]
-image = "php:8.2-cli"
+dockerfile = "Dockerfile"
 
 [env]
 APP_ENV = "production"
