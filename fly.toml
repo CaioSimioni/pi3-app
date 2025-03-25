@@ -4,7 +4,7 @@ app = "pi3-app"
 primary_region = "iad" # Altere para a região mais próxima
 
 [build]
-builder = "paketobuildpacks/builder:full-cf"
+image = "php:8.2-cli"
 
 [env]
 APP_ENV = "production"
