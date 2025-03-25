@@ -7,6 +7,7 @@ on:
 
 jobs:
   deploy:
+
     runs-on: ubuntu-latest
 
     steps:
@@ -36,7 +37,9 @@ jobs:
       run: |
         cp .env.example .env
         echo "DB_CONNECTION=sqlite" >> .env
-        echo "DB_DATABASE=:memory:" >> .env
+        echo "DB_DATABASE=database/testing.sqlite" >> .env
+        mkdir -p database
+        touch database/testing.sqlite
 
     - name: Generate application key
       run: php artisan key:generate
@@ -49,7 +52,6 @@ jobs:
 
     - name: Deploy to Fly.io
       env:
-        FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-      run: |
-        fly deploy --remote-only
+        FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }} # Ensure this secret is set in your repository settings
+      run: fly deploy --remote-only
 
