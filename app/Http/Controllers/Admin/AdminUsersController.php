@@ -7,6 +7,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Role;
 
 class AdminUsersController extends Controller
 {
@@ -15,6 +16,7 @@ class AdminUsersController extends Controller
         $users = User::all();
         return Inertia::render('admin/users', [
             'users' => $users,
+            'roles' => Role::getTranslations(),
         ]);
     }
 
@@ -27,9 +29,11 @@ class AdminUsersController extends Controller
             'role' => 'required|in:adm,aux,enf,med,far,chf',
         ]);
 
-        User::create($validated);
+        $validated['password'] = bcrypt($validated['password']); // Criptografar a senha
 
-        return redirect()->route('admin.users');
+        User::create($validated); // Criar o usuário com os dados validados
+
+        return redirect()->back()->with('success', 'User created successfully!'); // Redirecionar de volta com mensagem de sucesso
     }
 
     public function usersQuantity(): int

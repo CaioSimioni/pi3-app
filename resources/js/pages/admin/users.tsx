@@ -35,16 +35,7 @@ const sidebarNavItems: NavItem[] = [
     },
 ];
 
-const roleTranslations: { [key: string]: string } = {
-    adm: "Administrator",
-    aux: "Assistant",
-    far: "Pharmacist",
-    med: "Doctor",
-    chef: "Head Nurse",
-    enf: "Nurse",
-};
-
-export default function Users({ users }: PropsWithChildren<{ users: User[] }>) {
+export default function Users({ users, roles }: PropsWithChildren<{ users: User[], roles: { [key: string]: string } }>) {
     const { data, setData, post, patch, delete: destroy, processing, errors, reset } = useForm({
         name: '',
         email: '',
@@ -53,18 +44,47 @@ export default function Users({ users }: PropsWithChildren<{ users: User[] }>) {
         role: 'adm',
     });
 
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [editDialogOpen, setEditDialogOpen] = useState(false);
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [selectedUser, setSelectedUser] = useState<User | null>(null);
+    const [toastVisible, setToastVisible] = useState(false);
+    const [resetPassword, setResetPassword] = useState(false);
+
+    const openModal = (type: "create" | "edit" | "delete", user: User | null = null) => {
+        setSelectedUser(user);
+        if (type === "create") {
+            setDialogOpen(true);
+        } else if (type === "edit") {
+            setEditDialogOpen(true);
+            if (user) {
+                setData({
+                    name: user.name,
+                    email: user.email,
+                    role: user.role,
+                    password: "",
+                    password_confirmation: "",
+                });
+            }
+        } else if (type === "delete") {
+            setDeleteDialogOpen(true);
+        }
+    };
+
     const handleCreateUser = () => {
         post(route('user.create'), {
             onSuccess: () => {
-                reset();
-                setDialogOpen(false);
-                setToastVisible(true);
+                reset(); // Resetar o formulário após a criação
+                setDialogOpen(false); // Fechar o modal de criação
+                setToastVisible(true); // Mostrar o toast de sucesso
+            },
+            onError: () => {
+                setToastVisible(true); // Mostrar o toast em caso de erro
             },
         });
     };
 
     const handleEditUser = () => {
-
         if (!resetPassword) {
             delete data.password;
             delete data.password_confirmation;
@@ -78,7 +98,6 @@ export default function Users({ users }: PropsWithChildren<{ users: User[] }>) {
                 setToastVisible(true);
             },
         });
-
     };
 
     const handleDeleteUser = (userId: number) => {
@@ -89,13 +108,6 @@ export default function Users({ users }: PropsWithChildren<{ users: User[] }>) {
             },
         });
     };
-
-    const [dialogOpen, setDialogOpen] = useState(false);
-    const [editDialogOpen, setEditDialogOpen] = useState(false);
-    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-    const [toastVisible, setToastVisible] = useState(false);
-    const [selectedUser, setSelectedUser] = useState<User | null>(null);
-    const [resetPassword, setResetPassword] = useState(false);
 
     useEffect(() => {
         if (selectedUser) {
@@ -124,10 +136,9 @@ export default function Users({ users }: PropsWithChildren<{ users: User[] }>) {
                             </Toast>
                         )}
 
+                        <Button onClick={() => setDialogOpen(true)}>Create New User <CirclePlus /></Button>
+
                         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                            <DialogTrigger asChild>
-                                <Button onClick={() => setDialogOpen(true)}>Create New User <CirclePlus /></Button>
-                            </DialogTrigger>
                             <DialogContent>
                                 <DialogHeader>
                                     <DialogTitle>Create New User</DialogTitle>
@@ -140,7 +151,7 @@ export default function Users({ users }: PropsWithChildren<{ users: User[] }>) {
                                             id="name"
                                             type="text"
                                             value={data.name}
-                                            onChange={(e) => setData('name', e.target.value)}
+                                            onChange={(e) => setData("name", e.target.value)}
                                             disabled={processing}
                                         />
                                         {errors.name && <span>{errors.name}</span>}
@@ -151,7 +162,7 @@ export default function Users({ users }: PropsWithChildren<{ users: User[] }>) {
                                             id="email"
                                             type="email"
                                             value={data.email}
-                                            onChange={(e) => setData('email', e.target.value)}
+                                            onChange={(e) => setData("email", e.target.value)}
                                             disabled={processing}
                                         />
                                         {errors.email && <span>{errors.email}</span>}
@@ -162,7 +173,7 @@ export default function Users({ users }: PropsWithChildren<{ users: User[] }>) {
                                             id="password"
                                             type="password"
                                             value={data.password}
-                                            onChange={(e) => setData('password', e.target.value)}
+                                            onChange={(e) => setData("password", e.target.value)}
                                             disabled={processing}
                                         />
                                         {errors.password && <span>{errors.password}</span>}
@@ -173,21 +184,25 @@ export default function Users({ users }: PropsWithChildren<{ users: User[] }>) {
                                             id="password_confirmation"
                                             type="password"
                                             value={data.password_confirmation}
-                                            onChange={(e) => setData('password_confirmation', e.target.value)}
+                                            onChange={(e) => setData("password_confirmation", e.target.value)}
                                             disabled={processing}
                                         />
                                         {errors.password_confirmation && <span>{errors.password_confirmation}</span>}
                                     </div>
                                     <div>
                                         <Label htmlFor="role">Role</Label>
-                                        <Select value={data.role} onValueChange={(value) => setData('role', value)} disabled={processing}>
+                                        <Select
+                                            value={data.role}
+                                            onValueChange={(value) => setData("role", value)}
+                                            disabled={processing}
+                                        >
                                             <SelectTrigger>
                                                 <SelectValue placeholder="Select a role" />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                {Object.keys(roleTranslations).map((role) => (
+                                                {Object.keys(roles).map((role) => (
                                                     <SelectItem key={role} value={role}>
-                                                        {roleTranslations[role]}
+                                                        {roles[role]}
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>
@@ -198,6 +213,125 @@ export default function Users({ users }: PropsWithChildren<{ users: User[] }>) {
                                 <DialogFooter>
                                     <Button onClick={handleCreateUser} disabled={processing}>
                                         {processing ? 'Creating...' : 'Create'}
+                                    </Button>
+                                    <DialogClose asChild>
+                                        <Button variant="outline">Cancel</Button>
+                                    </DialogClose>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
+
+                        <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+                            <DialogContent>
+                                <DialogHeader>
+                                    <DialogTitle>Edit User</DialogTitle>
+                                    <DialogDescription>Update the details below to edit the user.</DialogDescription>
+                                </DialogHeader>
+                                <div className="space-y-4">
+                                    <div>
+                                        <Label htmlFor="name">Name</Label>
+                                        <Input
+                                            id="name"
+                                            type="text"
+                                            value={data.name}
+                                            onChange={(e) => setData("name", e.target.value)}
+                                            disabled={processing}
+                                        />
+                                        {errors.name && <span>{errors.name}</span>}
+                                    </div>
+                                    <div>
+                                        <Label htmlFor="email">Email</Label>
+                                        <Input
+                                            id="email"
+                                            type="email"
+                                            value={data.email}
+                                            onChange={(e) => setData("email", e.target.value)}
+                                            disabled={processing}
+                                        />
+                                        {errors.email && <span>{errors.email}</span>}
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <Checkbox
+                                            id="reset_password"
+                                            checked={resetPassword}
+                                            onCheckedChange={(checked) =>
+                                                setResetPassword(checked === true)
+                                            }
+                                            disabled={processing}
+                                        />
+                                        <Label htmlFor="reset_password">Reset Password</Label>
+                                    </div>
+                                    {resetPassword && (
+                                        <>
+                                            <div>
+                                                <Label htmlFor="password">Password</Label>
+                                                <Input
+                                                    id="password"
+                                                    type="password"
+                                                    value={data.password}
+                                                    onChange={(e) => setData("password", e.target.value)}
+                                                    disabled={processing}
+                                                />
+                                                {errors.password && <span>{errors.password}</span>}
+                                            </div>
+                                            <div>
+                                                <Label htmlFor="password_confirmation">Confirm Password</Label>
+                                                <Input
+                                                    id="password_confirmation"
+                                                    type="password"
+                                                    value={data.password_confirmation}
+                                                    onChange={(e) =>
+                                                        setData("password_confirmation", e.target.value)
+                                                    }
+                                                    disabled={processing}
+                                                />
+                                                {errors.password_confirmation && (
+                                                    <span>{errors.password_confirmation}</span>
+                                                )}
+                                            </div>
+                                        </>
+                                    )}
+                                    <div>
+                                        <Label htmlFor="role">Role</Label>
+                                        <Select
+                                            value={data.role}
+                                            onValueChange={(value) => setData("role", value)}
+                                            disabled={processing}
+                                        >
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select a role" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {Object.keys(roles).map((role) => (
+                                                    <SelectItem key={role} value={role}>
+                                                        {roles[role]}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                        {errors.role && <span>{errors.role}</span>}
+                                    </div>
+                                </div>
+                                <DialogFooter>
+                                    <Button onClick={handleEditUser} disabled={processing}>
+                                        {processing ? 'Updating...' : 'Update'}
+                                    </Button>
+                                    <DialogClose asChild>
+                                        <Button variant="outline">Cancel</Button>
+                                    </DialogClose>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
+
+                        <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+                            <DialogContent>
+                                <DialogHeader>
+                                    <DialogTitle>Confirm Deletion</DialogTitle>
+                                    <DialogDescription>Are you sure you want to delete the user <strong>{selectedUser?.name}</strong>?</DialogDescription>
+                                </DialogHeader>
+                                <DialogFooter>
+                                    <Button variant="destructive" onClick={() => handleDeleteUser(selectedUser!.id)}>
+                                        Delete
                                     </Button>
                                     <DialogClose asChild>
                                         <Button variant="outline">Cancel</Button>
@@ -224,125 +358,12 @@ export default function Users({ users }: PropsWithChildren<{ users: User[] }>) {
                                         <TableCell className="px-6 py-4 whitespace-nowrap">{user.id}</TableCell>
                                         <TableCell className="px-6 py-4 whitespace-nowrap">{user.name}</TableCell>
                                         <TableCell className="px-6 py-4 whitespace-nowrap">{user.email}</TableCell>
-                                        <TableCell className="px-6 py-4 whitespace-nowrap">{roleTranslations[user.role]}</TableCell>
-                                        <TableCell className="px-6 py-4 whitespace-nowrap">{new Date(user.created_at).toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' })}</TableCell>
-                                        <TableCell className="px-6 py-4 whitespace-nowrap">{new Date(user.updated_at).toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' })}</TableCell>
+                                        <TableCell className="px-6 py-4 whitespace-nowrap">{roles[user.role]}</TableCell>
+                                        <TableCell className="px-6 py-4 whitespace-nowrap">{new Date(user.created_at).toLocaleString('UTC', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' })}</TableCell>
+                                        <TableCell className="px-6 py-4 whitespace-nowrap">{new Date(user.updated_at).toLocaleString('UTC', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' })}</TableCell>
                                         <TableCell className="px-6 py-4 whitespace-nowrap">
-                                            <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-                                                <DialogTrigger asChild>
-                                                    <Button variant="outline" className="mr-2" size="sm" onClick={() => {
-                                                        setSelectedUser(user);
-                                                        setEditDialogOpen(true);
-                                                    }}>Edit<Pencil />
-                                                    </Button>
-                                                </DialogTrigger>
-                                                <DialogContent>
-                                                    <DialogHeader>
-                                                        <DialogTitle>Edit User</DialogTitle>
-                                                        <DialogDescription>Update the details below to edit the user.</DialogDescription>
-                                                    </DialogHeader>
-                                                    <div className="space-y-4">
-                                                        <div>
-                                                            <Label htmlFor="name">Name</Label>
-                                                            <Input
-                                                                id="name"
-                                                                type="text"
-                                                                value={data.name}
-                                                                onChange={(e) => setData('name', e.target.value)}
-                                                                disabled={processing}
-                                                            />
-                                                            {errors.name && <span>{errors.name}</span>}
-                                                        </div>
-                                                        <div>
-                                                            <Label htmlFor="email">Email</Label>
-                                                            <Input
-                                                                id="email"
-                                                                type="email"
-                                                                value={data.email}
-                                                                onChange={(e) => setData('email', e.target.value)}
-                                                                disabled={processing}
-                                                            />
-                                                            {errors.email && <span>{errors.email}</span>}
-                                                        </div>
-                                                        <div className="flex items-center gap-2">
-                                                            <Checkbox
-                                                                id="reset_password"
-                                                                checked={resetPassword}
-                                                                onCheckedChange={(checked) => setResetPassword(checked === true)}
-                                                                disabled={processing}
-                                                            />
-                                                            <Label htmlFor="reset_password">Reset Password</Label>
-                                                        </div>
-                                                        {resetPassword && (
-                                                            <>
-                                                                <div>
-                                                                    <Label htmlFor="password">Password</Label>
-                                                                    <Input
-                                                                        id="password"
-                                                                        type="password"
-                                                                        value={data.password}
-                                                                        onChange={(e) => setData('password', e.target.value)}
-                                                                        disabled={processing}
-                                                                    />
-                                                                    {errors.password && <span>{errors.password}</span>}
-                                                                </div>
-                                                                <div>
-                                                                    <Label htmlFor="password_confirmation">Confirm Password</Label>
-                                                                    <Input
-                                                                        id="password_confirmation"
-                                                                        type="password"
-                                                                        value={data.password_confirmation}
-                                                                        onChange={(e) => setData('password_confirmation', e.target.value)}
-                                                                        disabled={processing}
-                                                                    />
-                                                                    {errors.password_confirmation && <span>{errors.password_confirmation}</span>}
-                                                                </div>
-                                                            </>
-                                                        )}
-                                                        <div>
-                                                            <Label htmlFor="role">Role</Label>
-                                                            <Select value={data.role} onValueChange={(value) => setData('role', value)} disabled={processing}>
-                                                                <SelectTrigger>
-                                                                    <SelectValue placeholder="Select a role" />
-                                                                </SelectTrigger>
-                                                                <SelectContent>
-                                                                    {Object.keys(roleTranslations).map((role) => (
-                                                                        <SelectItem key={role} value={role}>
-                                                                            {roleTranslations[role]}
-                                                                        </SelectItem>
-                                                                    ))}
-                                                                </SelectContent>
-                                                            </Select>
-                                                            {errors.role && <span>{errors.role}</span>}
-                                                        </div>
-                                                    </div>
-                                                    <DialogFooter>
-                                                        <Button onClick={handleEditUser} disabled={processing}>
-                                                            {processing ? 'Updating...' : 'Update'}
-                                                        </Button>
-                                                        <DialogClose asChild>
-                                                            <Button variant="outline">Cancel</Button>
-                                                        </DialogClose>
-                                                    </DialogFooter>
-                                                </DialogContent>
-                                            </Dialog>
-                                            <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-                                                <DialogTrigger asChild>
-                                                    <Button variant="destructive" size="sm" onClick={() => { setSelectedUser(user); setDeleteDialogOpen(true); }}>Delete <Trash2 /></Button>
-                                                </DialogTrigger>
-                                                <DialogContent>
-                                                    <DialogHeader>
-                                                        <DialogTitle>Confirm Deletion</DialogTitle>
-                                                        <DialogDescription>Are you sure you want to delete the user <strong>{selectedUser?.name}</strong>?</DialogDescription>
-                                                    </DialogHeader>
-                                                    <DialogFooter>
-                                                        <Button variant="destructive" onClick={() => handleDeleteUser(selectedUser!.id)}>Delete</Button>
-                                                        <DialogClose asChild>
-                                                            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
-                                                        </DialogClose>
-                                                    </DialogFooter>
-                                                </DialogContent>
-                                            </Dialog>
+                                            <Button variant="outline" className="mr-2" size="sm" onClick={() => openModal("edit", user)}>Edit<Pencil /></Button>
+                                            <Button variant="destructive" size="sm" onClick={() => openModal("delete", user)}>Delete <Trash2 /></Button>
                                         </TableCell>
                                     </TableRow>
                                 ))}
