@@ -112,7 +112,9 @@ export default function Appointments({ appointments, patients }: PropsWithChildr
                                     <TableRow key={appointment.id}>
                                         <TableCell className="px-6 py-4 whitespace-nowrap">{appointment.id}</TableCell>
                                         <TableCell className="px-6 py-4 whitespace-nowrap">{appointment.patient?.name || "N/A"}</TableCell>
-                                        <TableCell className="px-6 py-4 whitespace-nowrap">{new Date(appointment.appointment_date).toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' })}</TableCell>
+                                        <TableCell className="px-6 py-4 whitespace-nowrap">
+                                            {new Date(appointment.appointment_date).toLocaleString('UTC', { timeZone: 'UTC', hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' })}
+                                        </TableCell>
                                         <TableCell className="px-6 py-4 whitespace-nowrap">
                                             <Button className="mr-2" variant="outline" size="sm" onClick={() => openModal("edit", appointment)}>
                                                 Edit <Pencil />
