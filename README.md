@@ -4,97 +4,113 @@ An open-source hospital management system designed to streamline and optimize ho
 
 ![Welcome Screen](./public/images/tela-welcome.png)
 
-## Features
+## 🚀 Features
 
 This system offers comprehensive tools for patient management, including electronic medical records, appointment scheduling, and treatment tracking. It also supports staff and medical team management with features like shift scheduling, communication tools, and specialty registration. Financial operations are streamlined with billing, insurance management, and financial reporting, while inventory and pharmacy control ensure proper tracking of medications and materials.
 
 Additional features include laboratory and exam management, emergency care tracking, and business intelligence tools for generating reports and dashboards. The system prioritizes security and compliance, offering access control, record auditing, and adherence to regulations like LGPD and HIPAA.
 
-## Installation and Deployment
+## 🔧 Installation and Deployment
 
-1. Clone the repository:
+You can run this project in two ways:
 
-   ```bash
-   git clone https://github.com/your-repo/pi3-laravel.git
-   cd pi3-laravel
-   ```
+### ✅ Method 1 - Local environment (requires PHP, Node, etc.)
 
-2. Install dependencies:
+**Prerequisites:**
 
-   ```bash
-   composer install --prefer-dist --no-progress --no-suggest --ansi
-   npm install
-   ```
+- PHP >= 8.3
+- Composer
+- Node.js >= 20.x
+- MySQL or SQLite
+- PHP Extensions: `mbstring`, `xml`, `bcmath`, `curl`, `zip`, `pdo`, `sqlite3`, `mysql`, `gd`, `tokenizer`
 
-3. Build assets:
+**Steps:**
 
-   ```bash
-   npm run build
-   ```
+```bash
+# 1. Clone the repository
+git clone https://github.com/your-repo/pi3-laravel.git
+cd pi3-laravel
 
-4. Set up the environment:
+# 2. Install PHP dependencies
+composer install
 
-   ```bash
-   cp .env.example .env
-   php artisan key:generate
-   ```
+# 3. Install JS dependencies
+yarn install
 
-5. Configure your database in the `.env` file and run migrations:
+# 4. Compile assets
+yarn build
 
-   ```bash
-   php artisan migrate
-   ```
+# 5. Configure the environment
+cp .env.example .env
+php artisan key:generate
 
-6. Deploy the application:
+# 6. Set up the database in .env
+# DATABASE_URL, DB_CONNECTION, DB_DATABASE, etc.
 
-   - Ensure your server meets the Laravel requirements (PHP 8.2, Node.js 23.x, etc.).
-   - Use a web server like Apache or Nginx to serve the application.
-   - Point the web server's document root to the `public` directory of the project.
+# 7. Run migrations and seeds
+php artisan migrate --seed
 
-7. Start the development server (optional for local testing):
+# 8. Start the server
+php artisan serve
+```
 
-   ```bash
-   php artisan serve
-   ```
+Access at: [http://localhost:8000](http://localhost:8000)
 
-## Usage
+### 🐳 Method 2 - Docker (isolated, ready for development)
 
-- Access the system at `http://your-domain` or `http://localhost:8000` (for local testing).
-- Log in with the default admin credentials (if applicable) or create a new account.
+**Prerequisites:**
+
+- Docker installed
+
+**Steps:**
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/your-repo/pi3-laravel.git
+cd pi3-laravel
+
+# 2. Build the image
+docker build -t pi3-laravel .
+
+# 3. Run the container
+docker run -p 8080:8080 --rm pi3-laravel
+```
+
+Access at: [http://localhost:8080](http://localhost:8080)
+
+> The Dockerfile handles everything: installs dependencies, creates `.env`, compiles assets, runs migrations, and starts the app.
+
+## 📲 Usage
+
+- Access `http://localhost:8000` (local mode) or `http://localhost:8080` (Docker).
+- Log in with the default admin account (if it exists) or register a new one.
 
 ![Dashboard Screen](./public/images/tela-dashboard.png)
 
-## License
+## 📝 License
 
 This project is licensed under the [MIT License](LICENSE).
 
-## Contributing
+## 🤝 Contributing
 
 We welcome contributions! Please follow these steps:
 
-1. Fork the repository.
-2. Create a new branch for your feature or bugfix:
+```bash
+# 1. Fork the project
+# 2. Create a new branch
+git checkout -b feature/feature-name
 
-   ```bash
-   git checkout -b feature-name
-   ```
+# 3. Make changes and commit
+git commit -m "feat: description of the change"
 
-3. Commit your changes:
+# 4. Push the branch
+git push origin feature/feature-name
 
-   ```bash
-   git commit -m "Description of changes"
-   ```
+# 5. Open a Pull Request
+```
 
-4. Push to your branch:
+For major changes, open an issue first to discuss the proposal.
 
-   ```bash
-   git push origin feature-name
-   ```
+## 📬 Contact
 
-5. Open a pull request.
-
-For major changes, please open an issue first to discuss your ideas.
-
-## Contact
-
-For questions or support, please open an issue or contact the maintainers.
+Have questions, bugs, or suggestions? Open an issue here on GitHub, and we'll address it!

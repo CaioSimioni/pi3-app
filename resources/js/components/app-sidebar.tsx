@@ -2,12 +2,22 @@ import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
-import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/react';
-import { LayoutGrid, UserRound, CalendarDays, ReceiptText, Stethoscope, Syringe, Pill, ClipboardPen, UsersRound, Shield, FileText, Warehouse, HeartPulse } from 'lucide-react';
+import { type NavItem, type SharedData } from '@/types';
+import { Link, usePage } from '@inertiajs/react';
+import {
+    CalendarDays,
+    ClipboardPen,
+    FileText,
+    HeartPulse,
+    LayoutGrid,
+    ReceiptText,
+    Shield,
+    Stethoscope,
+    UserRound,
+    UsersRound,
+    Warehouse,
+} from 'lucide-react';
 import AppLogo from './app-logo';
-import { type SharedData } from '@/types';
-import { usePage } from '@inertiajs/react';
 
 const mainNavItems: NavItem[] = [
     {
@@ -59,7 +69,7 @@ const mainNavItems: NavItem[] = [
         title: 'Reports & Analytics',
         href: '/reports',
         icon: ClipboardPen,
-    }
+    },
 ];
 
 const footerNavItems: NavItem[] = [
@@ -67,7 +77,7 @@ const footerNavItems: NavItem[] = [
         title: 'Admin Panel',
         href: '/admin',
         icon: Shield,
-    }
+    },
 ];
 
 export function AppSidebar() {
@@ -92,9 +102,7 @@ export function AppSidebar() {
             </SidebarContent>
 
             <SidebarFooter>
-                {auth.user.role === 'adm' && (
-                    <NavFooter items={footerNavItems} className="mt-auto" />
-                )}
+                {auth.user.role === 'adm' && <NavFooter items={footerNavItems} className="mt-auto" />}
                 <NavUser />
             </SidebarFooter>
         </Sidebar>

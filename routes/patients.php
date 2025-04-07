@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\PatientController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/patients', [PatientController::class, 'index'])->name('patients.index');
