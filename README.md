@@ -28,7 +28,7 @@ You can run this project in two ways:
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/your-repo/pi3-laravel.git
+git clone https://github.com/CaioSimioni/pi3-app.git
 cd pi3-laravel
 
 # 2. Install PHP dependencies
@@ -66,14 +66,14 @@ Access at: [http://localhost:8000](http://localhost:8000)
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/your-repo/pi3-laravel.git
-cd pi3-laravel
+git clone https://github.com/CaioSimioni/pi3-app.git
+cd pi3-app
 
 # 2. Build the image
-docker build -t pi3-laravel .
+docker build -t pi3-app .
 
 # 3. Run the container
-docker run -p 8080:8080 --rm pi3-laravel
+docker run -p 8080:8080 --rm pi3-app
 ```
 
 Access at: [http://localhost:8080](http://localhost:8080)
