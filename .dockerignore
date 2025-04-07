@@ -1,0 +1,25 @@
+# Laravel specific files
+/vendor
+/node_modules
+/public/storage
+/storage/*.key
+.env
+
+# SQLite database
+*.sqlite
+*.sqlite3
+
+# Logs and temporary files
+/storage/logs
+/storage/framework/cache
+/storage/framework/sessions
+/storage/framework/testing
+/storage/framework/views
+
+# IDE and system files
+.idea
+.vscode
+*.swp
+*.swo
+*.DS_Store
+Thumbs.db

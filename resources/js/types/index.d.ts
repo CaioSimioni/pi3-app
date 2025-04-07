@@ -46,6 +46,18 @@ export interface User {
     [key: string]: unknown; // This allows for additional properties...
 }
 
+export interface Material {
+    id: number;
+    name: string;
+    type: string;
+    description: string | null;
+    experation_date: string | null;
+    quantity: number;
+    created_at: string;
+    updated_at: string;
+    [key: string]: unknown;
+}
+
 export interface Patient {
     id: number;
     name: string;

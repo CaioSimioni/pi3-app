@@ -9,7 +9,8 @@ use App\Models\Appointment;
 
 class DashboardController extends Controller
 {
-    public function index(Request $request) {
+    public function index(Request $request)
+    {
         return Inertia::render('dashboard', [
             'patientsNumber' => Patient::count(),
             'appointmentsQuantity' => Appointment::count(),
